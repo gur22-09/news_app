@@ -3,12 +3,13 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'dart:async';
+import 'repository.dart';
 import '../models/item_models.dart';
 
-class NewsDbProvider {
+class NewsDbProvider implements Source, Cache{
   Database db;
 
-  init() async{
+  void init() async{
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentDirectory.path, "items.db");
     db = await openDatabase(
@@ -37,7 +38,7 @@ class NewsDbProvider {
     );
   }
 
-  fetchItem(int id) async {
+  Future<ItemModel> fetchItem(int id) async {
     final maps = await  db.query(
       "Items",
       columns: null,
@@ -47,9 +48,15 @@ class NewsDbProvider {
     if(maps.length > 0){
       return ItemModel.fromDb(maps.first);
     }
+    return null;
   }
 
-  addItem(ItemModel item) {
+  Future<int> addItem(ItemModel item) {
     return db.insert("Items", item.toMapForDb());
+  }
+
+  // TODO: Store and fetch top Id
+  Future<List<int>> fetchTopIds(){
+    return null;
   }
 }
