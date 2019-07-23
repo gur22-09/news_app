@@ -48,4 +48,8 @@ class NewsDbProvider {
       return ItemModel.fromDb(maps.first);
     }
   }
+
+  addItem(ItemModel item) {
+    return db.insert("Items", item.toMapForDb());
+  }
 }
